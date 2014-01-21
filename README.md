@@ -16,7 +16,8 @@ Người phát triển
 
 Người hướng dẫn
 -----------------
-    <strong>Giảng viên</strong> : Vũ Minh Yến
+    
+    Giảng viên : Vũ Minh Yến
 
 Tài liệu dự án
 -------------------
