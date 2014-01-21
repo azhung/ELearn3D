@@ -8,15 +8,15 @@ Dự án nghiên cứu và ứng dụng công nghệ WebGL để xây dựng web
 Người phát triển
 ----------------
 
-1. Hoàng Quốc Hưng
-2. Đỗ Mạnh Hà
-3. Trương Văn Định
-4. Trần Xuân Toàn
-5. Lê Thị Hương
+    1. Hoàng Quốc Hưng
+    2. Đỗ Mạnh Hà
+    3. Trương Văn Định
+    4. Trần Xuân Toàn
+    5. Lê Thị Hương
 
 Người hướng dẫn
 -----------------
-Giảng viên : Vũ Minh Yến
+    <strong>Giảng viên</strong> : Vũ Minh Yến
 
 Tài liệu dự án
 -------------------
