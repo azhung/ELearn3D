@@ -50,7 +50,14 @@ a {
 	box-shadow: 0px 0px 12px rgba(0,255,255,0.75);
 	border: 2px solid rgba(127,255,255,0.75);
 }
-
+	
+	.element:hover .symbol{
+		transform: rotateY(360deg);
+		-webkit-transform: rotateY(360deg);				
+		transition: 2s;
+		-webkit-transition: 2s;
+	}
+	
 	.element .number {
 		position: absolute;
 		top: 20px;
