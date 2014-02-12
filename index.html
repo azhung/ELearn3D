@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	<title>Hệ thống hỗ trợ học chữ cái cho trẻ em mẫu giáo</title>
 	<link rel="stylesheet" href="css/style_index.css" type="text/css" />
+
 </head>
 <body>
 	<div id="myCanvas">
@@ -13,7 +14,7 @@
 	<ul id="menu">
 		<li><a href="#">Bé học chữ</a></li>
 		<li><a href="#">Bé học số</a></li>
-		<li><a href="#">Bé ôn tập</a></li>
+		<li><a href="reviews.html">Bé ôn tập</a></li>
 	</ul>
 
 	<script src="js/three.min.js"></script>
@@ -24,179 +25,213 @@
 	<script src="js/customer/THREEx.FullScreen.js"></script>
 	<script src="js/customer/THREEx.WindowResize.js"></script>
 
+	<script src="js/customer/gamepad.js"></script>
 	<script src="js/customer/jquery-1.9.1.js"></script>
 	<script src="js/customer/jquery-ui.js"></script>
 
-	<script>
-	/*
-		Three.js "tutorials by example"
-		Author: Lee Stemkoski
-		Date: July 2013 (three.js v59dev)
-	*/
+<script>
+/*
+	Three.js "tutorials by example"
+	Author: Lee Stemkoski
+	Date: July 2013 (three.js v59dev)
+*/
 
-	// MAIN
+// MAIN
 
-	// standard global variables
-	var container, scene, camera, renderer, controls, stats;
-	var keyboard = new THREEx.KeyboardState();
-	var clock = new THREE.Clock();
-	// custom global variables
-	var cube;
+// standard global variables
+var container, scene, camera, renderer, controls, stats;
+var keyboard = new THREEx.KeyboardState();
+var clock = new THREE.Clock();
 
-	init();
-	animate();
+// custom global variables
+var android;
 
-	// FUNCTIONS 		
-	function init() 
+// the following code is from
+//    http://catchvar.com/threejs-animating-blender-models
+var animOffset       = 0,   // starting frame of animation
+	walking         = false,
+	duration        = 1000, // milliseconds to complete animation
+	keyframes       = 20,   // total number of animation frames
+	interpolation   = duration / keyframes, // milliseconds per frame
+	lastKeyframe    = 0,    // previous keyframe
+	currentKeyframe = 0;
+	
+init();
+animate();
+
+// FUNCTIONS 		
+function init() 
+{
+	// SCENE
+	scene = new THREE.Scene();
+	// CAMERA
+	// var width = window.innerWidth;
+	// var height = window.innerHeight;
+	var width = $("#myCanvas").width();	
+	var height = $("#myCanvas").height();
+	
+	var SCREEN_WIDTH = width, SCREEN_HEIGHT = height;
+	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+	scene.add(camera);
+	camera.position.set(0,150,400);
+	camera.lookAt(scene.position);	
+	// RENDERER
+	if ( Detector.webgl )
+		renderer = new THREE.WebGLRenderer( {antialias:true} );
+	else
+		renderer = new THREE.CanvasRenderer(); 
+	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	container = document.getElementById( 'myCanvas' );
+	container.appendChild( renderer.domElement );
+
+	// Sự kiện resize màn hình
+	// THREEx.WindowResize(renderer, camera);
+	// THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+	
+	// CONTROLS
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
+	// STATS
+	stats = new Stats();
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.bottom = '0px';
+	stats.domElement.style.zIndex = 100;
+	container.appendChild( stats.domElement );
+	// LIGHT
+	var light = new THREE.PointLight(0xffffff);
+	light.position.set(-100,200,100);
+	scene.add(light);
+	// FLOOR
+	var floorTexture = new THREE.ImageUtils.loadTexture( 'images/checkerboard.jpg' );
+	floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
+	floorTexture.repeat.set( 10, 10 );
+	var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
+	var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10);
+	var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+	floor.position.y = -0.5;
+	floor.rotation.x = Math.PI / 2;
+	scene.add(floor);
+	// SKYBOX/FOG
+	var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
+	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
+	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+	scene.add(skyBox);
+	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
+	
+	////////////
+	// CUSTOM //
+	////////////
+	
+	var jsonLoader = new THREE.JSONLoader();
+	jsonLoader.load( "models/android-animations.js", addModelToScene );
+	// addModelToScene function is called back after model has loaded
+	
+	var ambientLight = new THREE.AmbientLight(0x111111);
+	scene.add(ambientLight);
+	
+}
+
+function addModelToScene( geometry, materials ) 
+{
+	// for preparing animation
+	for (var i = 0; i < materials.length; i++)
+		materials[i].morphTargets = true;
+		
+	var material = new THREE.MeshFaceMaterial( materials );
+	android = new THREE.Mesh( geometry, material );
+	android.scale.set(10,10,10);
+	scene.add( android );
+}
+
+function animate() 
+{
+    requestAnimationFrame( animate );
+	render();		
+	update();
+}
+
+function update()
+{
+	// delta = change in time since last call (seconds)
+	delta = clock.getDelta(); 
+	var moveDistance = 100 * delta;
+	walking = false;
+
+	if (Gamepad.supported) 
 	{
-		// SCENE
-		scene = new THREE.Scene();
-		// CAMERA
-		var width = $("#myCanvas").width();
-		var height = $("#myCanvas").height();
-
-		var SCREEN_WIDTH = width, SCREEN_HEIGHT = height;
-		var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
-		camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
-		scene.add(camera);
-		camera.position.set(0,150,400);
-		camera.lookAt(scene.position);
-		// RENDERER
-		if ( Detector.webgl )
-			renderer = new THREE.WebGLRenderer( {antialias:true} );
-		else
-			renderer = new THREE.CanvasRenderer(); 
-		renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-		container = document.getElementById( 'myCanvas' );
-		container.appendChild( renderer.domElement );
-		// EVENTS
-		THREEx.WindowResize(renderer, camera);
-		THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
-		// CONTROLS
-		controls = new THREE.OrbitControls( camera, renderer.domElement );
-		// STATS
-		stats = new Stats();
-		stats.domElement.style.position = 'absolute';
-		stats.domElement.style.bottom = '0px';
-		stats.domElement.style.zIndex = 100;
-		container.appendChild( stats.domElement );
-		// LIGHT
-		var light = new THREE.PointLight(0xffffff);
-		light.position.set(0,150,100);
-		scene.add(light);
-		// FLOOR
-		var floorTexture = new THREE.ImageUtils.loadTexture( 'images/checkerboard.jpg' );
-		floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
-		floorTexture.repeat.set( 10, 10 );
-		var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
-		var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10);
-		var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-		floor.position.y = -0.5;
-		floor.rotation.x = Math.PI / 2;
-		scene.add(floor);
-		// SKYBOX/FOG
-		var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
-		var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
-		var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
-		scene.add(skyBox);
-		scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
-		
-		////////////
-		// CUSTOM //
-		////////////
-
-		// Spheres
-		//   Note: a standard flat rectangular image will look distorted,
-		//   a "spherical projection" image will look "normal".
-		
-		// radius, segmentsWidth, segmentsHeight
-		var sphereGeom =  new THREE.SphereGeometry( 40, 32, 16 ); 
-		
-		var light2 = new THREE.AmbientLight(0x444444);
-		scene.add(light2);
-		
-		// basic moon
-		var moonTexture = THREE.ImageUtils.loadTexture( 'images/moon.jpg' );
-		var moonMaterial = new THREE.MeshBasicMaterial( { map: moonTexture } );
-		var moon = new THREE.Mesh( sphereGeom.clone(), moonMaterial );
-		moon.position.set(-100, 50, 0);
-		scene.add( moon );	
-		
-		// shaded moon -- side away from light picks up AmbientLight's color.
-		var moonTexture = THREE.ImageUtils.loadTexture( 'images/moon.jpg' );
-		var moonMaterial = new THREE.MeshLambertMaterial( { map: moonTexture } );
-		var moon = new THREE.Mesh( sphereGeom.clone(), moonMaterial );
-		moon.position.set(0, 50, 0);
-		scene.add( moon );		
-		
-		// colored moon
-		var moonTexture = THREE.ImageUtils.loadTexture( 'images/moon.jpg' );
-		var moonMaterial = new THREE.MeshLambertMaterial( { map: moonTexture, color: 0xff8800, ambient: 0x0000ff } );
-		var moon = new THREE.Mesh( sphereGeom.clone(), moonMaterial );
-		moon.position.set(100, 50, 0);
-		scene.add( moon );	
-		
-		// create a small sphere to show position of light
-		var lightbulb = new THREE.Mesh( 
-			new THREE.SphereGeometry( 10, 16, 8 ), 
-			new THREE.MeshBasicMaterial( { color: 0xffaa00 } )
-		);
-		scene.add( lightbulb );
-		lightbulb.position = light.position;
-		
-		// Cubes
-		//   Note: when using a single image, it will appear on each of the faces.
-		//   Six different images (one per face) may be used if desired.
-		
-		var cubeGeometry = new THREE.CubeGeometry( 85, 85, 85 );
-		
-		var crateTexture = new THREE.ImageUtils.loadTexture( 'images/crate.gif' );
-		var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-		var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-		crate.position.set(-60, 50, -100);
-		scene.add( crate );		
-		
-		// create an array with six textures for a cool cube
-		var materialArray = [];
-		materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-1.png' ) }));
-		materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-6.png' ) }));
-		materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-2.png' ) }));
-		materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-5.png' ) }));
-		materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-3.png' ) }));
-		materialArray.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( 'images/Dice-Blue-4.png' ) }));
-		var DiceBlueMaterial = new THREE.MeshFaceMaterial(materialArray);
-		
-		var DiceBlueGeom = new THREE.CubeGeometry( 85, 85, 85, 1, 1, 1 );
-		var DiceBlue = new THREE.Mesh( DiceBlueGeom, DiceBlueMaterial );
-		DiceBlue.position.set(60, 50, -100);
-		scene.add( DiceBlue );	
-		
+		var pads = Gamepad.getStates();
+        var pad = pads[0]; // assume only 1 player.
+        if (pad) 
+		{
+			
+			// adjust for deadzone.
+			if (Math.abs(pad.leftStickX + pad.rightStickX) > 0.3)
+			{
+				android.rotation.y -= delta * (pad.leftStickX + pad.rightStickX);
+				walking = true;
+			}
+			if (Math.abs(pad.leftStickY + pad.rightStickY) > 0.2)
+			{
+				android.translateZ( -moveDistance * (pad.leftStickY + pad.rightStickY) );
+				walking = true;
+			}
+			if ( pad.faceButton0 || pad.faceButton1 || pad.faceButton2 || pad.faceButton3 || pad.select || pad.start )
+			{ 
+			    android.position.set(0,0,0);
+				android.rotation.set(0,0,0);
+			}
+			
+        }
 	}
-
-	function animate() 
+	
+	// move forwards / backwards
+	if ( keyboard.pressed("down") )
+		android.translateZ( -moveDistance );
+	if ( keyboard.pressed("up") )
+		android.translateZ(  moveDistance );
+	// rotate left/right
+	if ( keyboard.pressed("left") )
+		android.rotation.y += delta;
+	if ( keyboard.pressed("right") )
+		android.rotation.y -= delta;
+	
+	
+	var walkingKeys = ["up", "down", "left", "right"];
+	for (var i = 0; i < walkingKeys.length; i++)
 	{
-	    requestAnimationFrame( animate );
-		render();		
-		update();
+		if ( keyboard.pressed(walkingKeys[i]) )
+			walking = true;
 	}
+	
+	controls.update();
+	stats.update();
+}
 
-	function update()
+function render() 
+{
+	if ( android && walking ) // exists / is loaded 
 	{
-		if ( keyboard.pressed("z") ) 
-		{ 
-			// do something
+		// Alternate morph targets
+		time = new Date().getTime() % duration;
+		keyframe = Math.floor( time / interpolation ) + animOffset;
+		if ( keyframe != currentKeyframe ) 
+		{
+			android.morphTargetInfluences[ lastKeyframe ] = 0;
+			android.morphTargetInfluences[ currentKeyframe ] = 1;
+			android.morphTargetInfluences[ keyframe ] = 0;
+			lastKeyframe = currentKeyframe;
+			currentKeyframe = keyframe;
 		}
-		
-		controls.update();
-		stats.update();
+		android.morphTargetInfluences[ keyframe ] = 
+			( time % interpolation ) / interpolation;
+		android.morphTargetInfluences[ lastKeyframe ] = 
+			1 - android.morphTargetInfluences[ keyframe ];
 	}
+	
+	renderer.render( scene, camera );
+}
 
-	function render() 
-	{
-		renderer.render( scene, camera );
-	}
-
-	</script>
+</script>
 
 </body>
 </html>
