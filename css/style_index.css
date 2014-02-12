@@ -1,11 +1,19 @@
 *{ margin: 0; padding: 0;}
-body{
+
+html, body {
+	height: 100%;				
+}
+
+body {
 	background: url("img/bg.jpg") no-repeat;
+	margin: 0px;
+	font-family: Helvetica, sans-serif;
+	overflow: hidden;
 }
 
 #myCanvas{
-	width: 800px;
 	height: 500px;
+	width: 800px;
 	background: #ddff55;
 	position: absolute;
 	left: 50px;
