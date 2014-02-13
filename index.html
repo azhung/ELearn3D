@@ -24,6 +24,7 @@
 	<script src="js/customer/THREEx.KeyboardState.js"></script>
 	<script src="js/customer/THREEx.FullScreen.js"></script>
 	<script src="js/customer/THREEx.WindowResize.js"></script>
+	<script src="js/loaders/OBJLoader.js"></script>
 
 	<script src="js/customer/gamepad.js"></script>
 	<script src="js/customer/jquery-1.9.1.js"></script>
@@ -46,16 +47,6 @@ var clock = new THREE.Clock();
 // custom global variables
 var android;
 
-// the following code is from
-//    http://catchvar.com/threejs-animating-blender-models
-var animOffset       = 0,   // starting frame of animation
-	walking         = false,
-	duration        = 1000, // milliseconds to complete animation
-	keyframes       = 20,   // total number of animation frames
-	interpolation   = duration / keyframes, // milliseconds per frame
-	lastKeyframe    = 0,    // previous keyframe
-	currentKeyframe = 0;
-	
 init();
 animate();
 
@@ -65,12 +56,12 @@ function init()
 	// SCENE
 	scene = new THREE.Scene();
 	// CAMERA
-	// var width = window.innerWidth;
-	// var height = window.innerHeight;
 	var width = $("#myCanvas").width();	
 	var height = $("#myCanvas").height();
 	
 	var SCREEN_WIDTH = width, SCREEN_HEIGHT = height;
+
+	// var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
 	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
 	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 	scene.add(camera);
@@ -84,11 +75,9 @@ function init()
 	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	container = document.getElementById( 'myCanvas' );
 	container.appendChild( renderer.domElement );
-
-	// Sự kiện resize màn hình
-	// THREEx.WindowResize(renderer, camera);
-	// THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
-	
+	// EVENTS
+	THREEx.WindowResize(renderer, camera);
+	THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 	// CONTROLS
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
 	// STATS
@@ -110,20 +99,26 @@ function init()
 	var floor = new THREE.Mesh(floorGeometry, floorMaterial);
 	floor.position.y = -0.5;
 	floor.rotation.x = Math.PI / 2;
-	scene.add(floor);
+	// scene.add(floor);
 	// SKYBOX/FOG
 	var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
 	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
 	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
-	scene.add(skyBox);
+	// scene.add(skyBox);
 	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 	
 	////////////
 	// CUSTOM //
 	////////////
 	
+	// Note: if imported model appears too dark,
+	//   add an ambient light in this file
+	//   and increase values in model's exported .js file
+	//    to e.g. "colorAmbient" : [0.75, 0.75, 0.75]
 	var jsonLoader = new THREE.JSONLoader();
-	jsonLoader.load( "models/android-animations.js", addModelToScene );
+	jsonLoader.load( "models/Train.js", addModelToScene );
+	// jsonLoader.load( "models/gastonLagaffe.js", addModelToScene );
+	// jsonLoader.load( "models/Murcielago.js", addModelToScene );
 	// addModelToScene function is called back after model has loaded
 	
 	var ambientLight = new THREE.AmbientLight(0x111111);
@@ -133,10 +128,6 @@ function init()
 
 function addModelToScene( geometry, materials ) 
 {
-	// for preparing animation
-	for (var i = 0; i < materials.length; i++)
-		materials[i].morphTargets = true;
-		
 	var material = new THREE.MeshFaceMaterial( materials );
 	android = new THREE.Mesh( geometry, material );
 	android.scale.set(10,10,10);
@@ -152,55 +143,9 @@ function animate()
 
 function update()
 {
-	// delta = change in time since last call (seconds)
-	delta = clock.getDelta(); 
-	var moveDistance = 100 * delta;
-	walking = false;
-
-	if (Gamepad.supported) 
-	{
-		var pads = Gamepad.getStates();
-        var pad = pads[0]; // assume only 1 player.
-        if (pad) 
-		{
-			
-			// adjust for deadzone.
-			if (Math.abs(pad.leftStickX + pad.rightStickX) > 0.3)
-			{
-				android.rotation.y -= delta * (pad.leftStickX + pad.rightStickX);
-				walking = true;
-			}
-			if (Math.abs(pad.leftStickY + pad.rightStickY) > 0.2)
-			{
-				android.translateZ( -moveDistance * (pad.leftStickY + pad.rightStickY) );
-				walking = true;
-			}
-			if ( pad.faceButton0 || pad.faceButton1 || pad.faceButton2 || pad.faceButton3 || pad.select || pad.start )
-			{ 
-			    android.position.set(0,0,0);
-				android.rotation.set(0,0,0);
-			}
-			
-        }
-	}
-	
-	// move forwards / backwards
-	if ( keyboard.pressed("down") )
-		android.translateZ( -moveDistance );
-	if ( keyboard.pressed("up") )
-		android.translateZ(  moveDistance );
-	// rotate left/right
-	if ( keyboard.pressed("left") )
-		android.rotation.y += delta;
-	if ( keyboard.pressed("right") )
-		android.rotation.y -= delta;
-	
-	
-	var walkingKeys = ["up", "down", "left", "right"];
-	for (var i = 0; i < walkingKeys.length; i++)
-	{
-		if ( keyboard.pressed(walkingKeys[i]) )
-			walking = true;
+	if ( keyboard.pressed("z") ) 
+	{ 
+		// do something
 	}
 	
 	controls.update();
@@ -209,25 +154,6 @@ function update()
 
 function render() 
 {
-	if ( android && walking ) // exists / is loaded 
-	{
-		// Alternate morph targets
-		time = new Date().getTime() % duration;
-		keyframe = Math.floor( time / interpolation ) + animOffset;
-		if ( keyframe != currentKeyframe ) 
-		{
-			android.morphTargetInfluences[ lastKeyframe ] = 0;
-			android.morphTargetInfluences[ currentKeyframe ] = 1;
-			android.morphTargetInfluences[ keyframe ] = 0;
-			lastKeyframe = currentKeyframe;
-			currentKeyframe = keyframe;
-		}
-		android.morphTargetInfluences[ keyframe ] = 
-			( time % interpolation ) / interpolation;
-		android.morphTargetInfluences[ lastKeyframe ] = 
-			1 - android.morphTargetInfluences[ keyframe ];
-	}
-	
 	renderer.render( scene, camera );
 }
 
