@@ -146,14 +146,14 @@ function init()
 	];
 
 	for (var i = 0; i < textBox.length; i++) {
-		var x = Math.floor(Math.random()*801-300);
-		var y = Math.floor(Math.random()*801-300);
-		var z = Math.floor(Math.random()*801-300);
+		var x = Math.floor(Math.random()*1001-400);
+		var y = Math.floor(Math.random()*1001-400);
+		var z = Math.floor(Math.random()*1001-400);
 
-		var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-		var crateTexture = new THREE.ImageUtils.loadTexture( textBox[i] );
-		var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-		var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
+		var object = new THREE.CubeGeometry( 85, 85, 85 );
+		var objectTexture = new THREE.ImageUtils.loadTexture( textBox[i] );
+		var objectMaterial = new THREE.MeshBasicMaterial( { map: objectTexture } );
+		var crate = new THREE.Mesh( object.clone(), objectMaterial );
 		crate.position.set(x, y, z);
 		scene.add( crate );
 	};
