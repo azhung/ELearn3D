@@ -12,7 +12,7 @@
 
 	</div>
 	<ul id="menu">
-		<li><a href="#">Bé học chữ</a></li>
+		<li><a href="learn.html">Bé học chữ</a></li>
 		<li><a href="#">Bé học số</a></li>
 		<li><a href="reviews.html">Bé ôn tập</a></li>
 	</ul>
@@ -29,6 +29,12 @@
 	<script src="js/customer/gamepad.js"></script>
 	<script src="js/customer/jquery-1.9.1.js"></script>
 	<script src="js/customer/jquery-ui.js"></script>
+
+	<script>
+		$(function() {
+
+		})();
+	</script>
 
 <script>
 /*
@@ -62,11 +68,11 @@ function init()
 	var SCREEN_WIDTH = width, SCREEN_HEIGHT = height;
 
 	// var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
-	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
-	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.01, FAR = 20000;
+	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);	
+	camera.position.set(0,250,1000);
+	camera.lookAt (new THREE.Vector3 (1.0, 1.0, 0.0));
 	scene.add(camera);
-	camera.position.set(0,150,400);
-	camera.lookAt(scene.position);	
 	// RENDERER
 	if ( Detector.webgl )
 		renderer = new THREE.WebGLRenderer( {antialias:true} );
