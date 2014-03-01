@@ -112,256 +112,52 @@ function init()
 	var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, transparent: true } ); 
 	var multiMaterial = [ darkMaterial, wireframeMaterial ]; 
 
-	///////////
-	// ROW 1 //
-	///////////
-		
-	// 1 ALPHABET A
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/a.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(-200, 30, 100);
-	scene.add( crate );	
+	var images_path = 'images/alphabet/';
+	var textBox = [
+		images_path + 'a.jpg',
+		images_path + 'aw.jpg',
+		images_path + 'aa.jpg',
+		images_path + 'b.jpg',
+		images_path + 'c.jpg',
+		images_path + 'd.jpg',
+		images_path + 'dd.jpg',
+		images_path + 'e.jpg',
+		images_path + 'ee.jpg',
+		images_path + 'g.jpg',
+		images_path + 'h.jpg',
+		images_path + 'i.jpg',
+		images_path + 'k.jpg',
+		images_path + 'l.jpg',
+		images_path + 'm.jpg',
+		images_path + 'n.jpg',
+		images_path + 'o.jpg',
+		images_path + 'oo.jpg',
+		images_path + 'ow.jpg',
+		images_path + 'p.jpg',
+		images_path + 'q.jpg',
+		images_path + 'r.jpg',
+		images_path + 's.jpg',
+		images_path + 't.jpg',
+		images_path + 'u.jpg',
+		images_path + 'uw.jpg',
+		images_path + 'v.jpg',
+		images_path + 'x.jpg',
+		images_path + 'y.jpg'
+	];
 
-	// 2 ALPHABET AW
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/aw.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(-100, 30, 100);
-	scene.add( crate );
+	for (var i = 0; i < textBox.length; i++) {
+		var x = Math.floor(Math.random()*801-300);
+		var y = Math.floor(Math.random()*801-300);
+		var z = Math.floor(Math.random()*801-300);
 
-	// 3 ALPHABET AA
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/aa.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(0, 30, 100);
-	scene.add( crate );		
-	
-	// 4 ALPHABET B
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/b.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(100, 30, 100);
-	scene.add( crate );
-	
-	// 5 ALPHABET C
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/c.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(200, 30, 100);
-	scene.add( crate );
-	
-	///////////
-	// ROW 2 //
-	///////////
-	
-	// 6 ALPHABET D
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/d.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(-200, 30, 0);
-	scene.add( crate );	
+		var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
+		var crateTexture = new THREE.ImageUtils.loadTexture( textBox[i] );
+		var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
+		var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
+		crate.position.set(x, y, z);
+		scene.add( crate );
+	};
 
-	// 7 ALPHABET DD
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/dd.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(-100, 30, 0);
-	scene.add( crate );
-
-	// 8 ALPHABET E
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/e.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(0, 30, 0);
-	scene.add( crate );		
-	
-	// 9 ALPHABET EE
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/ee.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(100, 30, 0);
-	scene.add( crate );
-	
-	// 10 ALPHABET G
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/g.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(200, 30, 0);
-	scene.add( crate );
-	
-	///////////
-	// ROW 3 //
-	///////////
-	
-	// 11 ALPHABET H
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/h.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(-200, 30, -100);
-	scene.add( crate );	
-
-	// 12 ALPHABET I
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/i.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(-100, 30, -100);
-	scene.add( crate );
-
-	// 13 ALPHABET K
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/k.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(0, 30, -100);
-	scene.add( crate );		
-	
-	// 14 ALPHABET L
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/l.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(100, 30, -100);
-	scene.add( crate );
-	
-	// 15 ALPHABET M
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/m.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(200, 30, -100);
-	scene.add( crate );
-
-	///////////
-	// ROW 4 //
-	///////////
-	// 16 ALPHABET N
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/n.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(-200, 30, -200);
-	scene.add( crate );	
-
-	// 17 ALPHABET O
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/o.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(-100, 30, -200);
-	scene.add( crate );
-
-	// 18 ALPHABET OO
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/oo.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(0, 30, -200);
-	scene.add( crate );
-
-	// 19 ALPHABET OW
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/ow.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(100, 30, -200);
-	scene.add( crate );		
-	
-	// 20 ALPHABET P
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/p.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(200, 30, -200);
-	scene.add( crate );
-
-	// 21 ALPHABET R
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/r.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(300, 30, -200);
-	scene.add( crate );	
-	
-	// 22 ALPHABET Q
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/q.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(400, 30, -200);
-	scene.add( crate );
-	
-	///////////
-	// ROW 5 //
-	///////////
-
-	// 23 ALPHABET S
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/s.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(-200, 30, -300);
-	scene.add( crate );
-
-	// 24 ALPHABET T
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/t.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(-100, 30, -300);
-	scene.add( crate );		
-	
-	// 25 ALPHABET U
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/u.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(0, 30, -300);
-	scene.add( crate );
-	
-	// 26 ALPHABET UW
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/uw.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(100, 30, -300);
-	scene.add( crate );
-
-	// 27 ALPHABET V
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/v.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(200, 30, -300);
-	scene.add( crate );		
-	
-	// 28 ALPHABET X
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/x.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(300, 30, -300);
-	scene.add( crate );
-	
-	// 29 ALPHABET Y
-	var cubeGeometry = new THREE.CubeGeometry( 50, 50, 50 );
-	var crateTexture = new THREE.ImageUtils.loadTexture( 'images/alphabet/y.jpg' );
-	var crateMaterial = new THREE.MeshBasicMaterial( { map: crateTexture } );
-	var crate = new THREE.Mesh( cubeGeometry.clone(), crateMaterial );
-	crate.position.set(400, 30, -300);
-	scene.add( crate );
 
 }
 
