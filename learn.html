@@ -24,7 +24,7 @@
 <script src="js/info.js"></script>
 <div id="infoButton"></div>
 <div id="infoBox" title="Demo Information">
-
+This three.js demo is part of a collection at
 </div>
 <!-- ------------------------------------------------------------ -->
 
@@ -36,7 +36,9 @@ var container, scene, camera, renderer, controls, stats;
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
 // custom global variables
-var cube;
+
+var projector, mouse = {x : 0, y : 0}, INTERSECTED;
+var radius = 100, theta = 0;
 
 init();
 animate();
@@ -142,21 +144,53 @@ function init()
 		crate.position.set(x, y, z);
 		scene.add( crate );
 	};
-		
+	
+	projector = new THREE.Projector();
+	document.addEventListener('mousemove', onDocumentMouseMove, false);
+	
+}
+
+
+
+function onDocumentMouseMove( event ) {
+	event.preventDefault();
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
 
 function animate() 
 {
-    requestAnimationFrame( animate );
+  requestAnimationFrame( animate );
 	render();		
 	update();
 }
 
-function update()
+function update(event)
 {
-	if ( keyboard.pressed("z") ) 
-	{ 
+	if ( keyboard.pressed("a") ) 
+	{
+		
 		// do something
+	}
+	
+	var vector = new THREE.Vector3(mouse.x, mouse.y, 1);
+	projector.unprojectVector( vector, camera );
+	var ray = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
+	var intersects = ray.intersectObjects( scene.children, true );
+	if ( intersects.length )
+	{
+		
+			alert("ABC");
+		
+	} 
+	else // there are no intersections
+	{
+		// restore previous intersection object (if it exists) to its original color
+		if ( INTERSECTED ) 
+			INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+		// remove previous intersection object reference
+		//     by setting current intersection object to "nothing"
+		INTERSECTED = null;
 	}
 	
 	controls.update();
